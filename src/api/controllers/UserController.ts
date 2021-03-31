@@ -149,6 +149,38 @@ export class UserController {
         return response.status(200).send(successResponse);
     }
 
+    // User List API
+    /**
+     * @api {get} /api/auth/me My profile API
+     * @apiGroup Authentication
+     * @apiHeader {String} Authorization
+     * @apiSuccessExample {json} Success
+     * HTTP/1.1 200 OK
+     * {
+     *      "message": "Successfully get Me",
+     *      "data":"{}"
+     *      "status": "1"
+     * }
+     * @apiSampleRequest /api/auth/me
+     * @apiErrorExample {json} User Profile error
+     * HTTP/1.1 500 Internal Server Error
+     */
+     @Get('/me')
+     @Authorized()
+     public async me(@Res() response: any, @Req() request: any): Promise<any> {
+        const user = await this.userService.findOne({
+            where: {
+                userId: request.user.userId,
+            },
+        });
+         const successResponse: any = {
+             status: 1,
+             data: classToPlain(user),
+             message: 'Successfully get Me',
+         };
+         return response.status(200).send(successResponse);
+     }
+
     // Create User API
     /**
      * @api {post} /api/auth/create-user Create User API
