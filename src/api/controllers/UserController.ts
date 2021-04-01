@@ -72,7 +72,7 @@ export class UserController {
         if (user) {
             if (await User.comparePassword(user, loginParam.password)) {
                 // create a token
-                const token = jwt.sign({ id: user.userId }, '123##$$)(***&');
+                const token = jwt.sign({ id: user.userId }, 'G3bHU!!2@3ijsP<>dexeHH');
                 if (user.usergroup.isActive === 0) {
                     const errorResponse: any = {
                         status: 0,
@@ -171,7 +171,7 @@ export class UserController {
         const user = await this.userService.findOne({
             where: {
                 userId: request.user.userId,
-            },
+            }, relations: ['usergroup'],
         });
          const successResponse: any = {
              status: 1,
