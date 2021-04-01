@@ -72,7 +72,7 @@ export class UserController {
         if (user) {
             if (await User.comparePassword(user, loginParam.password)) {
                 // create a token
-                const token = jwt.sign({ id: user.userId }, 'G3bHU!!2@3ijsP<>dexeHH');
+                const token = jwt.sign({ id: user.userId }, '123##$$)(***&');
                 if (user.usergroup.isActive === 0) {
                     const errorResponse: any = {
                         status: 0,
