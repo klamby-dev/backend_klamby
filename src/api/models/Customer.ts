@@ -39,14 +39,29 @@ export class Customer extends BaseModel {
     @PrimaryGeneratedColumn({ name: 'id' })
     public id: number;
 
-    @Column({ name: 'first_name' })
+    @Column({ name: 'user_cid' })
+    public userCid: string;
+
+    @Column({ name: 'fb_uid' })
+    public fbUid: string;
+
+    @Column({ name: 'fb_email' })
+    public fbEmail: string;
+
+    @Column({ name: 'google_uid' })
+    public googleUid: string;
+
+    @Column({ name: 'google_email' })
+    public googleEmail: string;
+
+    @Column({ name: 'name' })
     public firstName: string;
 
     @Column({ name: 'last_name' })
     public lastName: string;
 
-    @Column({ name: 'username' })
-    public username: string;
+    @Column({ name: 'salutation' })
+    public salutation: string;
 
     @Exclude()
     @Column({ name: 'password' })
@@ -61,8 +76,50 @@ export class Customer extends BaseModel {
     @Column({ name: 'address' })
     public address: string;
 
+    @Column({ name: 'remember_token' })
+    public rememberToken: string;
+
+    @Column({ name: 'province' })
+    public province: string;
+
+    @Column({ name: 'district' })
+    public district: string;
+
+    @Column({ name: 'postal_code' })
+    public postalCode: string;
+
+    @Column({ name: 'dob' })
+    public dob: string;
+
+    @Column({ name: 'country' })
+    public country: string;
+
+    @Column({ name: 'company' })
+    public company: string;
+
+    @Column({ name: 'member_level' })
+    public member_level: string;
+
+    @Column({ name: 'points' })
+    public points: number;
+
+    @Column({ name: 'credit' })
+    public credit: number;
+
+    @Column({ name: 'otp_at' })
+    public otpAt: string;
+
+    @Column({ name: 'unbanned_until' })
+    public unbannedUntil: string;
+
     @Column({ name: 'country_id' })
     public countryId: number;
+
+    @Column({ name: 'is_subscribe' })
+    public isSubscribe: number;
+
+    @Column({ name: 'is_banned' })
+    public isBanned: number;
 
     @Column({ name: 'zone_id' })
     public zoneId: number;

@@ -208,29 +208,29 @@ export class CustomerController {
     @Authorized()
     public async customerList(@QueryParam('limit') limit: number, @QueryParam('offset') offset: number, @QueryParam('name') name: string, @QueryParam('status') status: string, @QueryParam('email') email: string, @QueryParam('customerGroup') customerGroup: string, @QueryParam('date') date: string, @QueryParam('count') count: number | boolean, @Res() response: any): Promise<any> {
         const search = [
-            {
+            ...!!name ? [{
                 name: 'firstName',
                 op: 'like',
                 value: name,
-            },
-            {
+            }] : [],
+            ...!!email ? [{
                 name: 'email',
                 op: 'like',
                 value: email,
-            },
-            {
-                name: 'createdDate',
-                op: 'like',
-                value: date,
-            },
+            }] : [],
+            // {
+            //     name: 'createdDate',
+            //     op: 'like',
+            //     value: date,
+            // },
             {
                 name: 'customerGroupId',
-                op: 'like',
+                op: 'where',
                 value: customerGroup,
             },
             {
                 name: 'isActive',
-                op: 'like',
+                op: 'where',
                 value: status,
             },
         ];
