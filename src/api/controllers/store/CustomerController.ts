@@ -64,7 +64,6 @@ export class CustomerController {
         newUser.firstName = registerParam.name;
         newUser.password = await Customer.hashPassword(registerParam.password);
         newUser.email = registerParam.emailId;
-        newUser.username = registerParam.emailId;
         newUser.mobileNumber = registerParam.phoneNumber;
         newUser.isActive = 1;
         newUser.ip = (request.headers['x-forwarded-for'] ||
