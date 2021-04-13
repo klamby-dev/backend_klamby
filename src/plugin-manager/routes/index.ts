@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {AuthRoute} from './AuthRouter';
+// import {AuthRoute} from './AuthRouter';
 import {HomeRoute} from './HomeRouter';
 import {cashOnDeliveryRoute} from './CashondeliveryRouter';
 import {PaypalRoute, PaypalNoAuthRoute} from './PaypalRouter';
@@ -15,11 +15,11 @@ interface IROUTER {
 }
 
 export const ROUTER: IROUTER[] = [
-    {
-        handler: AuthRoute,
-        middleware: [globalMiddleware.index],
-        path: '/',
-    },
+    // {
+    //     handler: AuthRoute,
+    //     middleware: [globalMiddleware.index],
+    //     path: '/',
+    // },
     {
         handler: HomeRoute,
         middleware: [globalMiddleware.index , passportConfig.isAuthenticated],

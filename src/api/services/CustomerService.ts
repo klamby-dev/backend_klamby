@@ -48,14 +48,26 @@ export class CustomerService {
         }
 
         if (search && search.length > 0) {
-            search.forEach((table: any) => {
-                const operator: string = table.op;
-                if (operator === 'where' && table.value !== '') {
-                    condition.where[table.name] = table.value;
-                } else if (operator === 'like' && table.value !== '') {
-                    condition.where[table.name] = Like('%' + table.value + '%');
-                }
-            });
+            const globalSearch = search.find(s => s.name === 'global');
+
+            if (!!globalSearch) {
+                condition.where = [
+                    { firstName: Like('%' + globalSearch.value + '%') },
+                    { email: Like('%' + globalSearch.value + '%') },
+                    { lastName: Like('%' + globalSearch.value + '%') },
+                ];
+            } else {
+                search.forEach((table: any) => {
+                    if (table.name !== 'global') {
+                        const operator: string = table.op;
+                        if (operator === 'where' && table.value !== '') {
+                            condition.where[table.name] = table.value;
+                        } else if (operator === 'like' && table.value !== '') {
+                            condition.where[table.name] = Like('%' + table.value + '%');
+                        }
+                    }
+                });
+            }
         }
 
         if (order && order > 0) {

@@ -177,6 +177,7 @@ export class CustomerController {
      * @apiHeader {String} Authorization
      * @apiParam (Request body) {Number} limit limit
      * @apiParam (Request body) {Number} offset offset
+     * @apiParam (Request body) {String} searchAll search globally by firstname, lastname or email
      * @apiParam (Request body) {String} name search by name
      * @apiParam (Request body) {String} email search bu email
      * @apiParam (Request body) {Number} status 0->inactive 1-> active
@@ -187,17 +188,56 @@ export class CustomerController {
      * HTTP/1.1 200 OK
      * {
      *      "message": "Successfully get customer list",
-     *      "data":{
-     *      "customerGroupId" : "",
-     *      "username" : "",
-     *      "email" : "",
-     *      "mobileNUmber" : "",
-     *      "password" : "",
-     *      "avatar" : "",
-     *      "avatarPath" : "",
-     *      "status" : "",
-     *      "safe" : "",
-     *      }
+     *      "data":[{
+     *      "createdBy": null,
+     *      "createdDate": "2021-03-25T17:11:12.000Z",
+     *      "modifiedBy": null,
+     *      "modifiedDate": "2021-03-25T17:16:01.000Z",
+     *      "id": 515775,
+     *      "userCid": "cf383940-8d5a-11eb-8186-bf8e00d4c44e",
+     *      "fbUid": null,
+     *      "fbEmail": null,
+     *      "googleUid": null,
+     *      "googleEmail": null,
+     *      "firstName": "Yustina",
+     *      "lastName": "Mardianti",
+     *      "salutation": null,
+     *      "password": "$2y$10$Ffm.FVRCpgGWwV40goNh2OvFCaM/hdANa1bLcnGiMjGX1b0huQlni",
+     *      "email": "julaehadede@gmail.com",
+     *      "mobileNumber": "85711310834",
+     *      "address": "Jalan Majalaya Rancaekek, Kp Solokan Garut Rt 04 Rw 06, Desa/Kec. Solokanjeruk ( KONTER AHR CELL)",
+     *      "rememberToken": null,
+     *      "province": "JAWA BARAT",
+     *      "district": "BDO10130||Solokan Jeruk",
+     *      "postalCode": "40376",
+     *      "dob": null,
+     *      "country": "INDONESIA",
+     *      "company": null,
+     *      "member_level": null,
+     *      "points": null,
+     *      "credit": 0,
+     *      "otpAt": "2021-03-25T17:11:54.000Z",
+     *      "unbannedUntil": null,
+     *      "countryId": null,
+     *      "isSubscribe": null,
+     *      "isBanned": null,
+     *      "zoneId": null,
+     *      "city": "1||BDO10100||Kab. Bandung",
+     *      "local": null,
+     *      "oauthData": null,
+     *      "avatar": null,
+     *      "newsletter": null,
+     *      "avatarPath": null,
+     *      "customerGroupId": 1,
+     *      "lastLogin": null,
+     *      "safe": null,
+     *      "ip": null,
+     *      "mailStatus": null,
+     *      "pincode": null,
+     *      "deleteFlag": 0,
+     *      "isActive": 1,
+     *      "customerGroupName": "default"
+     *      }]
      *      "status": "1"
      * }
      * @apiSampleRequest /api/customer/customerlist
@@ -206,8 +246,23 @@ export class CustomerController {
      */
     @Get('/customerlist')
     @Authorized()
-    public async customerList(@QueryParam('limit') limit: number, @QueryParam('offset') offset: number, @QueryParam('name') name: string, @QueryParam('status') status: string, @QueryParam('email') email: string, @QueryParam('customerGroup') customerGroup: string, @QueryParam('date') date: string, @QueryParam('count') count: number | boolean, @Res() response: any): Promise<any> {
+    public async customerList(
+        @QueryParam('limit') limit: number,
+        @QueryParam('offset') offset: number,
+        @QueryParam('name') name: string,
+        @QueryParam('status') status: string,
+        @QueryParam('email') email: string,
+        @QueryParam('searchAll') searchAll: string,
+        @QueryParam('customerGroup') customerGroup: string,
+        @QueryParam('date') date: string,
+        @QueryParam('count') count: number | boolean,
+        @Res() response: any
+    ): Promise<any> {
         const search = [
+            ...!!searchAll ? [{
+                name: 'global',
+                value: searchAll,
+            }] : [],
             ...!!name ? [{
                 name: 'firstName',
                 op: 'like',
