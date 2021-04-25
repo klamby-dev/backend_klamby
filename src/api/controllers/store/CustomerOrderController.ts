@@ -201,7 +201,7 @@ export class CustomerOrderController {
         orderData.currencyRight = currencySymbol.symbolRight;
         orderData.currencyLeft = currencySymbol.symbolLeft;
         orderProduct = checkoutParam.productDetails;
-        let j = 1;
+        // let j = 1;
         for (i = 0; i < orderProduct.length; i++) {
             let price;
             const productValue = await this.productService.findOne({ where: { productId: orderProduct[i].productId } });
@@ -229,9 +229,9 @@ export class CustomerOrderController {
             price = parseInt(productPrice, 0) + parseInt(optionPrice, 0);
             const productDetails = new OrderProduct();
             productDetails.productId = orderProduct[i].productId;
-            const nwDate = new Date();
-            const odrDate = nwDate.getFullYear() + ('0' + (nwDate.getMonth() + 1)).slice(-2) + ('0' + nwDate.getDate()).slice(-2);
-            productDetails.orderProductPrefixId = orderData.invoicePrefix.concat('-' + odrDate + orderData.orderId) + j;
+            // const nwDate = new Date();
+            // const odrDate = nwDate.getFullYear() + ('0' + (nwDate.getMonth() + 1)).slice(-2) + ('0' + nwDate.getDate()).slice(-2);
+            // productDetails.orderProductPrefixId = orderData.invoicePrefix.concat('-' + odrDate + orderData.orderId) + j;
             productDetails.name = productValue.name;
             productDetails.orderId = orderData.orderId;
             productDetails.quantity = orderProduct[i].quantity;
@@ -266,7 +266,7 @@ export class CustomerOrderController {
             });
             productImageData.productOption = productOptionValue;
             productDetailData.push(productImageData);
-            j++;
+            // j++;
         }
         newOrder.total = totalAmount;
         newOrder.invoiceNo = 'INV00'.concat(orderData.orderId);
