@@ -26,8 +26,8 @@ export class OrderProduct extends BaseModel {
     @Column({ name: 'order_id' })
     public orderId: number;
 
-    @Column({ name: 'order_product_prefix_id' })
-    public orderProductPrefixId: string;
+    // @Column({ name: 'order_product_prefix_id' })
+    // public orderProductPrefixId: string;
 
     @Column({ name: 'name' })
     public name: string;
