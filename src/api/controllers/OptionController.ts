@@ -36,13 +36,12 @@ export class OptionController {
                 private productOptionService: ProductOptionService) {
     }
 
-
     @Get('/generate-option')
     @Authorized()
     public async generate(): Promise<any> {
         const size = [
-            'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'
-        ]
+            'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL',
+        ];
 
         const newOption = new Option();
         newOption.type = 'select';

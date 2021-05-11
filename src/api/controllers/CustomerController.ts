@@ -20,6 +20,7 @@ import {
     Req,
     Res
 } from 'routing-controllers';
+import jwt from 'jsonwebtoken';
 import * as AWS from 'aws-sdk';
 import { classToPlain } from 'class-transformer';
 import { aws_setup } from '../../env';
@@ -37,15 +38,94 @@ import { EmailTemplateService } from '../services/EmailTemplateService';
 import { DeleteCustomerRequest } from './requests/DeleteCustomerRequest';
 import { CustomerGroupService } from '../services/CustomerGroupService';
 import * as fs from 'fs';
+import { UserLogin as LoginRequest } from './requests/UserLoginRequest';
+import { AccessToken } from '../models/AccessTokenModel';
+import { AccessTokenService } from '../services/AccessTokenService';
 
 @JsonController('/customer')
 export class CustomerController {
     constructor(private customerService: CustomerService, private orderProductService: OrderProductService,
                 private productService: ProductService,
+                private accessTokenService: AccessTokenService,
                 private productImageService: ProductImageService,
                 private orderService: OrderService,
                 private customerGroupService: CustomerGroupService,
                 private emailTemplateService: EmailTemplateService) {
+    }
+
+    // Login API
+    /**
+     * @api {post} /api/customer/login Login
+     * @apiGroup Customer
+     * @apiParam (Request body) {String} username User Email
+     * @apiParam (Request body) {String} password User Password
+     * @apiParamExample {json} Input
+     * {
+     *      "username" : "",
+     *      "password" : "",
+     * }
+     * @apiSuccessExample {json} Success
+     * HTTP/1.1 200 OK
+     * {
+     *      "data": "{
+     *         "token":''
+     *      }",
+     *      "message": "Successfully login",
+     *      "status": "1"
+     * }
+     * @apiSampleRequest /api/auth/login
+     * @apiErrorExample {json} Login error
+     * HTTP/1.1 500 Internal Server Error
+     */
+    @Post('/login')
+    public async login(@Body({ validate: true }) loginParam: LoginRequest, @Res() response: any): Promise<any> {
+        const user = await this.customerService.findOne({
+            where: {
+                email: loginParam.username,
+                deleteFlag: 0,
+            }, relations: ['customerGroup'],
+        });
+        if (user) {
+            if (await User.comparePassword(user, loginParam.password)) {
+                // create a token
+                const token = jwt.sign({ id: user.userId }, '123##$$)(***&');
+                if (user.customerGroup.isActive === 0) {
+                    const errorResponse: any = {
+                        status: 0,
+                        message: 'InActive Role',
+                    };
+                    return response.status(400).send(errorResponse);
+                }
+                if (token) {
+                    const newToken = new AccessToken();
+                    newToken.userId = user.userId;
+                    newToken.token = token;
+                    await this.accessTokenService.create(newToken);
+                }
+                const successResponse: any = {
+                    status: 1,
+                    message: 'Loggedin successful',
+                    data: {
+                        token,
+                        user: classToPlain(user),
+                    },
+                };
+                return response.status(200).send(successResponse);
+            } else {
+                const errorResponse: any = {
+                    status: 0,
+                    message: 'Invalid password',
+                };
+                return response.status(400).send(errorResponse);
+            }
+        } else {
+
+            const errorResponse: any = {
+                status: 0,
+                message: 'Invalid username',
+            };
+            return response.status(400).send(errorResponse);
+        }
     }
 
     // Create Customer API
@@ -751,9 +831,9 @@ export class CustomerController {
             workSheet.getCell(cell).border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
             workSheet.getCell(cell).fill = {
                 type: 'pattern',
-                pattern:'darkTrellis',
-                fgColor:{argb:'FFFF00'},
-                bgColor:{argb:'FFFF00'}
+                pattern: 'darkTrellis',
+                fgColor: { argb: 'FFFF00' },
+                bgColor: { argb: 'FFFF00' },
             };
         });
 
@@ -763,7 +843,7 @@ export class CustomerController {
                 dataId.lastName = '';
             }
             rows.push([
-                dataId.id, 
+                dataId.id,
                 dataId.firstName + ' ' + dataId.lastName,
                 dataId.mobileNumber,
                 dataId.email,
@@ -775,7 +855,7 @@ export class CustomerController {
                 dataId.postalCode,
                 dataId.isActive ? 'Active' : 'Non Active',
                 dataId.points,
-                dataId.createdDate
+                dataId.createdDate,
             ]);
         }
         // Add all rows data in sheet

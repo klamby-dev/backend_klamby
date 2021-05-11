@@ -72,7 +72,7 @@ export class Product extends BaseModel {
 
     @Column({ name: 'publish_date' })
     public publishDate: Date;
-    
+
     @Column({ name: 'release_date' })
     public releaseDate: Date;
 
