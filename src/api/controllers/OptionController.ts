@@ -36,6 +36,42 @@ export class OptionController {
                 private productOptionService: ProductOptionService) {
     }
 
+
+    @Get('/generate-option')
+    @Authorized()
+    public async generate(): Promise<any> {
+        const size = [
+            'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'
+        ]
+
+        const newOption = new Option();
+        newOption.type = 'select';
+        newOption.sortOrder = 0;
+        const optionSave = await this.optionService.create(newOption);
+        const newOptionDescription = new OptionDescription();
+        newOptionDescription.optionId = optionSave.optionId;
+        newOptionDescription.name = 'size';
+        await this.optionDescriptionService.create(newOptionDescription);
+        const optionValue: any = size;
+        if (optionValue !== undefined) {
+            const promise = optionValue.map(async (result: any, i) => {
+                const optionValues = new OptionValue();
+
+                optionValues.sortOrder = i;
+                optionValues.optionId = optionSave.optionId;
+                const multipleOptionValues = await this.optionValueService.create(optionValues);
+                const optionValueDescription = new OptionValueDescription();
+                optionValueDescription.name = result;
+                optionValueDescription.optionValueId = multipleOptionValues.optionValueId;
+                optionValueDescription.optionId = optionSave.optionId;
+                await this.optionValueDescriptionService.create(optionValueDescription);
+                const temp: any = result;
+                return temp;
+            });
+            await Promise.all(promise);
+        }
+    }
+
     // Create Option
     /**
      * @api {post} /api/option/add-option Add Option API
