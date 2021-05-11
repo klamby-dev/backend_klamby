@@ -51,6 +51,12 @@ export class Product extends BaseModel {
     @Column({ name: 'image_path' })
     public imagePath: string;
 
+    @Column({ name: 'measurement_image' })
+    public measurementImage: string;
+
+    @Column({ name: 'measurement_container' })
+    public measurementContainer: string;
+
     @Column({ name: 'manufacturer_id' })
     public manufacturerId: number;
 
@@ -63,6 +69,12 @@ export class Product extends BaseModel {
 
     @Column({ name: 'date_available' })
     public dateAvailable: Date;
+
+    @Column({ name: 'publish_date' })
+    public publishDate: Date;
+    
+    @Column({ name: 'release_date' })
+    public releaseDate: Date;
 
     @Column({ name: 'sort_order' })
     public sortOrder: number;
@@ -99,6 +111,9 @@ export class Product extends BaseModel {
 
     @Column({ name: 'is_active' })
     public isActive: number;
+
+    @Column({ name: 'is_po' })
+    public isPo: number;
 
     @Column({ name: 'rating' })
     public rating: number;

@@ -49,6 +49,18 @@ export class ProductOptionValue extends BaseModel {
     @Column({ name: 'weight' })
     public weight: number;
 
+    @Column({ name: 'sku' })
+    public sku: string;
+
+    @Column({ name: 'max' })
+    public max: number;
+
+    @Column({ name: 'firstStock' })
+    public firstStock: number;
+
+    @Column({ name: 'discount' })
+    public discount: number;
+
     @Column({ name: 'weight_prefix' })
     public weightPrefix: string;
 

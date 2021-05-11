@@ -37,6 +37,12 @@ export class Category extends BaseModel {
     @Column({ name: 'meta_tag_keyword' })
     public metaTagKeyword: string;
 
+    @Column({ name: 'facebook_category_id' })
+    public facebookCategoryId: string;
+
+    @Column({ name: 'google_category_id' })
+    public googleCategoryId: string;
+
     @Column({ name: 'is_active' })
     public isActive: number;
 

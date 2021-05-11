@@ -184,6 +184,11 @@ export class ProductController {
      * @apiParam (Request body) {Number} condition 1->new 2->used
      * @apiParam (Request body) {Number} status status
      * @apiParam (Request body) {Number} sortOrder sortOrder
+     * @apiParam (Request body) {Number} isPo pre order status
+     * @apiParam (Request body) {String} measurementContainer measurementContainer
+     * @apiParam (Request body) {String} measurementImage measurementImage
+     * @apiParam (Request body) {String} publishDate publishDate
+     * @apiParam (Request body) {String} releaseDate releaseDate
      * @apiParam (Request body) {String} productSpecial productSpecial
      * @apiParam (Request body) {String} productDiscount productDiscount
      * @apiParam (Request body) {String} productOptions productOptions
@@ -207,6 +212,11 @@ export class ProductController {
      *      "outOfStockStatus" : "",
      *      "sortOrder" : "",
      *      "condition" : "",
+     *      "isPo": "",
+     *      "measurementContainer" : "",
+     *      "measurementImage" : "",
+     *      "publishDate": "",
+     *      "releaseDate": "",
      *      "image":[
      *      {
      *      "image":""
@@ -241,6 +251,11 @@ export class ProductController {
      *               "subtractStock":""
      *               "pricePrefix":""
      *               "price":""
+     *               "sku":""
+     *               "weight":""
+     *               "max":""
+     *               "firstStock":""
+     *               "discount":""
      *            }]
      *      }
      *      ]
@@ -277,6 +292,12 @@ export class ProductController {
         newProduct.isActive = product.status;
         newProduct.todayDeals = 0;
         newProduct.sortOrder = product.sortOrder;
+        newProduct.measurementContainer = product.measurementContainer;
+        newProduct.measurementImage = product.measurementImage;
+        newProduct.publishDate = product.publishDate;
+        newProduct.releaseDate = product.releaseDate;
+        newProduct.isPo = product.isPo;
+
         const saveProduct = await this.productService.create(newProduct);
 
         // save category
@@ -354,6 +375,11 @@ export class ProductController {
                         productOptionValueData.quantity = optionvalue.quantity;
                         productOptionValueData.subtractStock = optionvalue.subtractStock;
                         productOptionValueData.pricePrefix = optionvalue.pricePrefix;
+                        productOptionValueData.sku = optionvalue.sku;
+                        productOptionValueData.weight = optionvalue.weight;
+                        productOptionValueData.max = optionvalue.max;
+                        productOptionValueData.firstStock = optionvalue.firstStock;
+                        productOptionValueData.discount = optionvalue.discount;
                         productOptionValueData.price = optionvalue.price;
                         await this.productOptionValueService.create(productOptionValueData);
                     }
@@ -412,6 +438,11 @@ export class ProductController {
      * @apiParam (Request body) {String} condition 1->new 2->used
      * @apiParam (Request body) {Number} status status
      * @apiParam (Request body) {Number} sortOrder sortOrder
+     * @apiParam (Request body) {Number} isPo pre order status
+     * @apiParam (Request body) {String} measurementContainer measurementContainer
+     * @apiParam (Request body) {String} measurementImage measurementImage
+     * @apiParam (Request body) {String} publishDate publishDate
+     * @apiParam (Request body) {String} releaseDate releaseDate
      * @apiParam (Request body) {String} productOptions productOptions
      * @apiParam (Request body) {String} productRelated productRelated
      * @apiParamExample {json} Input
@@ -433,6 +464,11 @@ export class ProductController {
      *      "outOfStockStatus" : "",
      *      "condition" : "",
      *      "sortOrder" : "",
+     *      "isPo": "",
+     *      "measurementContainer" : "",
+     *      "measurementImage" : "",
+     *      "publishDate": "",
+     *      "releaseDate": "",
      *      "image":[
      *      {
      *      "image":""
@@ -468,6 +504,11 @@ export class ProductController {
      *               "subtractStock":""
      *               "pricePrefix":""
      *               "price":""
+     *               "sku":""
+     *               "weight":""
+     *               "max":""
+     *               "firstStock":""
+     *               "discount":""
      *            }]
      *      }
      *      ]
@@ -512,6 +553,11 @@ export class ProductController {
         updateProduct.condition = product.condition;
         updateProduct.isActive = product.status;
         updateProduct.sortOrder = product.sortOrder;
+        updateProduct.measurementContainer = product.measurementContainer;
+        updateProduct.measurementImage = product.measurementImage;
+        updateProduct.publishDate = product.publishDate;
+        updateProduct.releaseDate = product.releaseDate;
+        updateProduct.isPo = product.isPo;
         const saveProduct = await this.productService.create(updateProduct);
 
         // delete previous category
@@ -574,6 +620,11 @@ export class ProductController {
                         productOptionValueData.quantity = optionvalue.quantity;
                         productOptionValueData.subtractStock = optionvalue.subtractStock;
                         productOptionValueData.pricePrefix = optionvalue.pricePrefix;
+                        productOptionValueData.sku = optionvalue.sku;
+                        productOptionValueData.weight = optionvalue.weight;
+                        productOptionValueData.max = optionvalue.max;
+                        productOptionValueData.firstStock = optionvalue.firstStock;
+                        productOptionValueData.discount = optionvalue.discount;
                         productOptionValueData.price = optionvalue.price;
                         await this.productOptionValueService.create(productOptionValueData);
                     }
@@ -770,7 +821,7 @@ export class ProductController {
                     dataValue.optionname = '';
                 }
                 const optionType: any = await this.productOptionValueService.findAll({
-                    select: ['productOptionId', 'optionId', 'productId', 'optionValueId', 'quantity', 'subtractStock', 'pricePrefix', 'price'],
+                    select: ['productOptionId', 'optionId', 'productId', 'optionValueId', 'quantity', 'subtractStock', 'pricePrefix', 'price', 'weight', 'sku', 'max', 'firstStock', 'discount'],
                     where: { optionId: optionIdValue, productId: productOptionValueId },
                 }).then(async (optionValue) => {
                     const optionDescriptionName = await Promise.all(optionValue.map(async (valueData): Promise<any> => {

@@ -30,6 +30,12 @@ export class AddProductRequest {
     @IsNotEmpty()
     public image: string;
 
+    public measurementContainer: string;
+    public measurementImage: string;
+    public publishDate: Date;
+    public releaseDate: Date;
+    public isPo: number;
+
     @IsNotEmpty()
     public model: number;
 

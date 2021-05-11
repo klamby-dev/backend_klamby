@@ -35,6 +35,8 @@ export class CategoryController {
      * @apiParam (Request body) {number} sortOrder Category sortOrder
      * @apiParam (Request body) {String} metaTagTitle Category metaTagTitle
      * @apiParam (Request body) {String} metaTagDescription Category metaTagDescription
+     * @apiParam (Request body) {String} facebookCategoryId facebookCategoryId
+     * @apiParam (Request body) {String} googleCategoryId googleCategoryId
      * @apiParam (Request body) {String} metaTagKeyword Category metaTagKeyword
      * @apiParam (Request body) {Number} status Category status 1-> Active 0-> inactive
      * @apiParamExample {json} Input
@@ -45,6 +47,8 @@ export class CategoryController {
      *      "metaTagTitle" : "",
      *      "metaTagDescription" : "",
      *      "metaTagKeyword" : "",
+     *      "facebookCategoryId": "",
+     *      "googleCategoryId": "",
      *      "status" : "",
      * }
      * @apiSuccessExample {json} Success
@@ -68,6 +72,8 @@ export class CategoryController {
         newCategory.metaTagDescription = category.metaTagDescription;
         newCategory.metaTagKeyword = category.metaTagKeyword;
         newCategory.isActive = category.status;
+        newCategory.googleCategoryId = category.googleCategoryId;
+        newCategory.facebookCategoryId = category.facebookCategoryId;
         const categorySave = await this.categoryService.create(newCategory);
 
         const getAllPath: any = await this.categoryPathService.find({
@@ -115,6 +121,8 @@ export class CategoryController {
      * @apiParam (Request body) {String} name Category name
      * @apiParam (Request body) {number} parentInt Category  parentInt
      * @apiParam (Request body) {number} sortOrder Category sortOrder
+     * @apiParam (Request body) {String} facebookCategoryId facebookCategoryId
+     * @apiParam (Request body) {String} googleCategoryId googleCategoryId
      * @apiParam (Request body) {String} metaTagTitle Category metaTagTitle
      * @apiParam (Request body) {String} metaTagDescription Category metaTagDescription
      * @apiParam (Request body) {String} metaTagKeyword Category metaTagKeyword
@@ -125,6 +133,8 @@ export class CategoryController {
      *      "name" : "",
      *      "parentInt" : "",
      *      "sortOrder" : "",
+     *      "facebookCategoryId": "",
+     *      "googleCategoryId": "",
      *      "metaTagTitle" : "",
      *      "metaTagDescription" : "",
      *      "metaTagKeyword" : "",
@@ -162,6 +172,8 @@ export class CategoryController {
         categoryId.metaTagDescription = category.metaTagDescription;
         categoryId.metaTagKeyword = category.metaTagKeyword;
         categoryId.isActive = category.status;
+        categoryId.googleCategoryId = category.googleCategoryId;
+        categoryId.facebookCategoryId = category.facebookCategoryId;
         const categorySave = await this.categoryService.create(categoryId);
 
         const deleteCategory = await this.categoryPathService.find({ where: { categoryId: category.categoryId } });
@@ -298,7 +310,7 @@ export class CategoryController {
     @Get('/categorylist')
     @Authorized()
     public async categoryList(@QueryParam('limit') limit: number, @QueryParam('offset') offset: number, @QueryParam('keyword') keyword: string, @QueryParam('sortOrder') sortOrder: number, @QueryParam('status') status: number, @QueryParam('count') count: number | boolean, @Res() response: any): Promise<any> {
-        const select = ['categoryId', 'name', 'parentInt', 'sortOrder', 'metaTagTitle', 'metaTagDescription', 'metaTagKeyword', 'isActive'];
+        const select = ['categoryId', 'name', 'parentInt', 'sortOrder', 'metaTagTitle', 'metaTagDescription', 'metaTagKeyword', 'isActive', 'googleCategoryId', 'facebookCategoryId'];
 
         const search = [
             {
@@ -377,7 +389,7 @@ export class CategoryController {
     @Get('/category-list-intree')
     @Authorized()
     public async categoryListTree(@QueryParam('limit') limit: number, @QueryParam('offset') offset: number, @QueryParam('keyword') keyword: string, @QueryParam('sortOrder') sortOrder: number, @QueryParam('count') count: number | boolean, @Res() response: any): Promise<Category> {
-        const select = ['categoryId', 'name', 'parentInt', 'sortOrder', 'metaTagTitle', 'metaTagDescription', 'metaTagKeyword', 'isActive'];
+        const select = ['categoryId', 'name', 'parentInt', 'sortOrder', 'metaTagTitle', 'metaTagDescription', 'metaTagKeyword', 'isActive', 'facebookCategoryId', 'googleCategoryId'];
 
         const search = [
             {

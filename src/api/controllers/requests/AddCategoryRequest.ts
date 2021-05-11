@@ -26,5 +26,8 @@ export class AddCategory {
 
     public metaTagKeyword: string;
 
+    public googleCategoryId: string;
+    public facebookCategoryId: string;
+
     public status: number;
 }

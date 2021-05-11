@@ -28,6 +28,8 @@ export class UpdateCategoryRequest {
     public metaTagDescription: string;
 
     public metaTagKeyword: string;
+    public googleCategoryId: string;
+    public facebookCategoryId: string;
 
     public status: number;
 }

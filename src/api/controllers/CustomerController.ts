@@ -556,6 +556,7 @@ export class CustomerController {
 
         const finalResult = await Promise.all(productLists);
         customer.productList = finalResult;
+        customer.orderList = order;
         if (finalResult) {
             const successResponse: any = {
                 status: 1,
@@ -730,29 +731,61 @@ export class CustomerController {
         }
         // Excel sheet column define
         workSheet.columns = [
-            { header: 'Customer Id', key: 'id', size: 16, width: 15 },
+            { header: 'ID', key: 'id', size: 16, width: 15 },
             { header: 'Customer Name', key: 'first_name', size: 16, width: 15 },
-            { header: 'User Name', key: 'username', size: 16, width: 24 },
-            { header: 'Email Id', key: 'email', size: 16, width: 15 },
-            { header: 'Mobile Number', key: 'mobileNumber', size: 16, width: 15 },
-            { header: 'Date Of Registration', key: 'createdDate', size: 16, width: 15 },
+            { header: 'Mobile', key: 'mobileNumber', size: 16, width: 15 },
+            { header: 'Email', key: 'email', size: 16, width: 15 },
+            { header: 'Address', key: 'address', size: 16, width: 24 },
+            { header: 'Country', key: 'country', size: 16, width: 10 },
+            { header: 'Province', key: 'province', size: 16, width: 15 },
+            { header: 'City', key: 'city', size: 16, width: 15 },
+            { header: 'District', key: 'district', size: 16, width: 15 },
+            { header: 'Postal Code', key: 'postal', size: 16, width: 15 },
+            { header: 'Status', key: 'status', size: 16, width: 15 },
+            { header: 'Points', key: 'points', size: 16, width: 15 },
+            { header: 'Created At', key: 'createdDate', size: 16, width: 15 },
         ];
-        workSheet.getCell('A1').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-        workSheet.getCell('B1').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-        workSheet.getCell('C1').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-        workSheet.getCell('D1').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-        workSheet.getCell('E1').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
-        workSheet.getCell('F1').border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+        const headerCells = ['A1', 'B1', 'C1', 'D1', 'E1', 'F1', 'G1', 'H1', 'I1', 'J1', 'K1', 'L1', 'M1'];
+
+        headerCells.forEach(cell => {
+            workSheet.getCell(cell).border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+            workSheet.getCell(cell).fill = {
+                type: 'pattern',
+                pattern:'darkTrellis',
+                fgColor:{argb:'FFFF00'},
+                bgColor:{argb:'FFFF00'}
+            };
+        });
+
         for (const id of customerid) {
             const dataId = await this.customerService.findOne(id);
             if (dataId.lastName === null) {
                 dataId.lastName = '';
             }
-            rows.push([dataId.id, dataId.firstName + ' ' + dataId.lastName, dataId.username, dataId.email, dataId.mobileNumber, dataId.createdDate]);
+            rows.push([
+                dataId.id, 
+                dataId.firstName + ' ' + dataId.lastName,
+                dataId.mobileNumber,
+                dataId.email,
+                dataId.address,
+                dataId.country,
+                dataId.province,
+                dataId.city,
+                dataId.district,
+                dataId.postalCode,
+                dataId.isActive ? 'Active' : 'Non Active',
+                dataId.points,
+                dataId.createdDate
+            ]);
         }
         // Add all rows data in sheet
         workSheet.addRows(rows);
-        const fileName = './CustomerExcel_' + Date.now() + '.xlsx';
+
+        if (rows.length === 1) {
+            // display customer order
+        }
+
+        const fileName = './Klamby_-_Customer_Sales_' + Date.now() + '.xlsx';
         await workBook.xlsx.writeFile(fileName);
         return new Promise((resolve, reject) => {
             response.download(fileName, (err, data) => {

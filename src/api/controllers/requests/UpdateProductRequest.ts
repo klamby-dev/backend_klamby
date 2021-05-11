@@ -26,6 +26,12 @@ export class UpdateProductRequest {
     // @IsNotEmpty()
     public upc: string;
 
+    public measurementContainer: string;
+    public measurementImage: string;
+    public publishDate: Date;
+    public releaseDate: Date;
+    public isPo: number;
+
     // @IsNotEmpty()
     public metaTagTitle: string;
 
