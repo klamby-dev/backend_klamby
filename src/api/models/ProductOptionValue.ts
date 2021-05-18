@@ -55,7 +55,7 @@ export class ProductOptionValue extends BaseModel {
     @Column({ name: 'max' })
     public max: number;
 
-    @Column({ name: 'firstStock' })
+    @Column({ name: 'first_stock' })
     public firstStock: number;
 
     @Column({ name: 'discount' })

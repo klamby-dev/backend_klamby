@@ -53,6 +53,38 @@ export class CustomerController {
                 private emailTemplateService: EmailTemplateService) {
     }
 
+    // customer profile API
+    /**
+     * @api {get} /api/customer/me My profile API
+     * @apiGroup Customer
+     * @apiHeader {String} Authorization
+     * @apiSuccessExample {json} Success
+     * HTTP/1.1 200 OK
+     * {
+     *      "message": "Successfully get Me",
+     *      "data":"{}"
+     *      "status": "1"
+     * }
+     * @apiSampleRequest /api/customer/me
+     * @apiErrorExample {json} User Profile error
+     * HTTP/1.1 500 Internal Server Error
+     */
+     @Get('/me')
+     @Authorized(['customer'])
+     public async me(@Res() response: any, @Req() request: any): Promise<any> {
+        const user = await this.customerService.findOne({
+            where: {
+                id: request.user.id,
+            }, relations: ['customerGroup'],
+        });
+         const successResponse: any = {
+             status: 1,
+             data: classToPlain(user),
+             message: 'Successfully get Me',
+         };
+         return response.status(200).send(successResponse);
+     }
+
     // Login API
     /**
      * @api {post} /api/customer/login Login
@@ -88,7 +120,7 @@ export class CustomerController {
         if (user) {
             if (await User.comparePassword(user, loginParam.password)) {
                 // create a token
-                const token = jwt.sign({ id: user.userId }, '123##$$)(***&');
+                const token = jwt.sign({ id: user.id }, '123##$$)(***&');
                 if (user.customerGroup.isActive === 0) {
                     const errorResponse: any = {
                         status: 0,
@@ -98,7 +130,7 @@ export class CustomerController {
                 }
                 if (token) {
                     const newToken = new AccessToken();
-                    newToken.userId = user.userId;
+                    newToken.userId = user.id;
                     newToken.token = token;
                     await this.accessTokenService.create(newToken);
                 }

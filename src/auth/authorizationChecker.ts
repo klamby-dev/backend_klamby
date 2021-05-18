@@ -30,8 +30,6 @@ export function authorizationChecker(connection: Connection): (action: Action, r
             return false;
         }
 
-        console.log(roles);
-
         if (roles[0] === 'customer') {
             action.request.user = await authService.validateCustomer(userId);
             if (action.request.user === undefined) {
