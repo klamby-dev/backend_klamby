@@ -25,6 +25,7 @@ import { ProductOptionService } from '../../services/ProductOptionService';
 import { ProductOptionValueService } from '../../services/ProductOptionValueService';
 import { OptionDescriptionService } from '../../services/OptionDescriptionService';
 import { OptionValueDescriptionService } from '../../services/OptionValueDescriptionService';
+import { ProductCareInfoService } from '../../services/ProductCareInfoService';
 import { OptionService } from '../../services/OptionService';
 import { ProductRatingService } from '../../services/RatingService';
 
@@ -35,6 +36,7 @@ export class ProductController {
                 private categoryService: CategoryService,
                 private productImageService: ProductImageService,
                 private customerService: CustomerService,
+                private productCareInfoService: ProductCareInfoService,
                 private productViewLogService: ProductViewLogService,
                 private customerWishlistService: CustomerWishlistService,
                 private productOptionService: ProductOptionService,
@@ -81,6 +83,7 @@ export class ProductController {
                 productId: id,
             },
         });
+        productDetails.CareInfo = await this.productCareInfoService.findOne(productDetails.productCareInfoId);
         productDetails.Category = await this.productToCategoryService.findAll({
             select: ['categoryId', 'productId'],
             where: { productId: id },
@@ -98,6 +101,7 @@ export class ProductController {
             const results = Promise.all(category);
             return results;
         });
+        let discount = 0;
         productDetails.productOption = await this.productOptionService.find({
             where: { productId: id },
             select: ['productOptionId', 'optionId', 'value', 'required', 'productId'],
@@ -119,11 +123,13 @@ export class ProductController {
                     dataValue.optionname = '';
                 }
                 const optionType: any = await this.productOptionValueService.findAll({
-                    select: ['productOptionId', 'optionId', 'productId', 'optionValueId', 'quantity', 'subtractStock', 'pricePrefix', 'price'],
+                    select: ['productOptionId', 'optionId', 'productId', 'optionValueId', 'quantity', 'subtractStock', 'pricePrefix', 'price', 'discount'],
                     where: { optionId: optionIdValue, productId: productOptionValueId },
                 }).then(async (optionValue) => {
                     const optionDescriptionName = await Promise.all(optionValue.map(async (valueData): Promise<any> => {
+                    discount = optionIdValue.discount > discount ? optionIdValue.discount : discount;
                         const optionDataDetails: any = valueData;
+                        discount = optionDataDetails.discount > discount ? optionDataDetails.discount : discount;
                         const optionValueIdData = valueData.optionValueId;
                         const dataName = await this.optionValueDescriptionService.findOne({
                             where: { optionValueId: optionValueIdData },
@@ -155,6 +161,7 @@ export class ProductController {
             const optionData = Promise.all(productOption);
             return optionData;
         });
+        productDetails.discount = discount;
         const nowDate = new Date();
         const todaydate = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate();
         const productSpecial = await this.productSpecialService.findSpecialPrice(id, todaydate);

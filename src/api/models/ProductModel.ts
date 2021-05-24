@@ -112,6 +112,9 @@ export class Product extends BaseModel {
     @Column({ name: 'is_active' })
     public isActive: number;
 
+    @Column({ name: 'product_care_info_id' })
+    public productCareInfoId: number;
+
     @Column({ name: 'is_po' })
     public isPo: number;
 

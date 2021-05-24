@@ -7,7 +7,7 @@
  */
 
 import 'reflect-metadata';
-import { Get, JsonController, Res, Req, QueryParam, Body, Post, QueryParams } from 'routing-controllers';
+import { Get, JsonController, Param, Res, Req, QueryParam, Body, Post, QueryParams } from 'routing-controllers';
 import { BannerService } from '../../services/BannerService';
 import { MAILService } from '../../../auth/mail.services';
 import { classToPlain } from 'class-transformer';
@@ -32,14 +32,21 @@ import { PluginService } from '../../services/PluginService';
 import { WidgetService } from '../../services/WidgetService';
 import { WidgetItemService } from '../../services/WidgetItemService';
 import { ProductRelatedService } from '../../services/ProductRelatedService';
+import { ProductOptionValueService } from '../../services/ProductOptionValueService';
+import { ConfigService } from '../../services/ConfigService';
 import { LanguageService } from '../../services/LanguageService';
 import { ProductRelatedRequest } from './requests/ProductRelatedRequest';
 
 @JsonController('/list')
 export class CommonListController {
-    constructor(private bannerService: BannerService, private categoryService: CategoryService,
-                private productService: ProductService, private productImageService: ProductImageService,
-                private countryService: CountryService, private contactService: ContactService,
+    constructor(
+                private bannerService: BannerService,
+                private configService: ConfigService,
+                private categoryService: CategoryService,
+                private productService: ProductService,
+                private productImageService: ProductImageService,
+                private countryService: CountryService,
+                private contactService: ContactService,
                 private emailTemplateService: EmailTemplateService,
                 private zoneService: ZoneService,
                 private pluginService: PluginService,
@@ -47,8 +54,11 @@ export class CommonListController {
                 private widgetItemService: WidgetItemService,
                 private productRelatedService: ProductRelatedService,
                 private customerWishlistService: CustomerWishlistService, private languageService: LanguageService,
-                private productDiscountService: ProductDiscountService, private productSpecialService: ProductSpecialService,
-                private productToCategoryService: ProductToCategoryService, private categoryPathService: CategoryPathService, private userService: UserService
+                private productOptionValueService: ProductOptionValueService,
+                private productDiscountService: ProductDiscountService,
+                private productSpecialService: ProductSpecialService,
+                private productToCategoryService: ProductToCategoryService, private categoryPathService: CategoryPathService,
+                private userService: UserService
     ) {
     }
 
@@ -97,6 +107,33 @@ export class CommonListController {
             status: 1,
             message: 'Successfully got banner list',
             data: bannerList,
+        };
+        return response.status(200).send(successResponse);
+    }
+
+    // Get Config API
+    /**
+     * @api {get} /api/list/config/:key
+     * @apiGroup Store List
+     * @apiSuccessExample {json} Success
+     * HTTP/1.1 200 OK
+     * {
+     *      "status": "1"
+     *      "message": "Successfully get config value",
+     *      "data":"{}"
+     * }
+     * @apiSampleRequest /api/list/config/:key
+     * @apiErrorExample {json} Banner List error
+     * HTTP/1.1 500 Internal Server Error
+     */
+    // Product list Function
+    @Get('/config/:key')
+    public async getConfig(@Param('key') key: string, @Req() request: any, @Res() response: any): Promise<any> {
+        const config = await this.configService.findOneByKey(key);
+        const successResponse: any = {
+            status: 1,
+            message: 'Successfully get config value',
+            data: config || {},
         };
         return response.status(200).send(successResponse);
     }
@@ -285,7 +322,20 @@ export class CommonListController {
                     defaultImage: 1,
                 },
             });
+
+            const discount = await this.productOptionValueService.findAll({
+                select: ['discount'],
+                where: { productId: result.productId },
+            }).then((val) => {
+                const results = val.reduce((sum: number, value: any) => {
+                    sum = value.discount > sum ? value.discount : sum;
+                    return sum;
+                }, 0);
+                return results;
+            });
+
             const temp: any = result;
+            temp.discount = discount;
             temp.Images = productImage ? productImage : '';
             temp.Category = productToCategory;
             const nowDate = new Date();
