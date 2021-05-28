@@ -21,6 +21,12 @@ export class CreateProductViewLogTable1552376547486 implements MigrationInterfac
                     isPrimary: false,
                     isNullable: false,
                 }, {
+                    name: 'customer_id',
+                    type: 'int',
+                    length: '11',
+                    isPrimary: false,
+                    isNullable: false,
+                }, {
                     name: 'first_name',
                     type: 'varchar',
                     length: '255',

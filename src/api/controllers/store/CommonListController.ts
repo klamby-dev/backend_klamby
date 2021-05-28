@@ -323,19 +323,27 @@ export class CommonListController {
                 },
             });
 
-            const discount = await this.productOptionValueService.findAll({
-                select: ['discount'],
+            const opt = await this.productOptionValueService.findAll({
+                select: ['discount', 'price', 'pricePrefix'],
                 where: { productId: result.productId },
             }).then((val) => {
-                const results = val.reduce((sum: number, value: any) => {
-                    sum = value.discount > sum ? value.discount : sum;
+                const results = val.reduce((sum: any, value: any) => {
+                    sum.discount = value.discount > sum.discount ? value.discount : sum.discount;
+                    sum.price = value.price > sum.price ? value.price : sum.price;
+                    sum.pricePrefix = value.pricePrefix || sum.pricePrefix;
                     return sum;
-                }, 0);
+                }, {
+                    discount: 0,
+                    price: 0,
+                    pricePrefix: 0,
+                });
                 return results;
             });
 
             const temp: any = result;
-            temp.discount = discount;
+            temp.discount = opt.discount;
+            temp.price = opt.price || temp.price;
+            temp.pricePrefix = opt.pricePrefix;
             temp.Images = productImage ? productImage : '';
             temp.Category = productToCategory;
             const nowDate = new Date();

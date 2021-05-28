@@ -123,7 +123,7 @@ export class ProductController {
                     dataValue.optionname = '';
                 }
                 const optionType: any = await this.productOptionValueService.findAll({
-                    select: ['productOptionId', 'optionId', 'productId', 'optionValueId', 'quantity', 'subtractStock', 'pricePrefix', 'price', 'discount'],
+                    select: ['productOptionId', 'productOptionValueId', 'optionId', 'productId', 'optionValueId', 'quantity', 'subtractStock', 'pricePrefix', 'price', 'discount'],
                     where: { optionId: optionIdValue, productId: productOptionValueId },
                 }).then(async (optionValue) => {
                     const optionDescriptionName = await Promise.all(optionValue.map(async (valueData): Promise<any> => {
