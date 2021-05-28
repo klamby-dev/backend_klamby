@@ -328,9 +328,11 @@ export class CommonListController {
                 where: { productId: result.productId },
             }).then((val) => {
                 const results = val.reduce((sum: any, value: any) => {
-                    sum.discount = value.discount > sum.discount ? value.discount : sum.discount;
-                    sum.price = value.price > sum.price ? value.price : sum.price;
-                    sum.pricePrefix = value.pricePrefix || sum.pricePrefix;
+                    if (value.discount > sum.discount) {
+                        sum.discount = value.discount;
+                        sum.price = value.price;
+                        sum.pricePrefix = value.pricePrefix;
+                    }
                     return sum;
                 }, {
                     discount: 0,
@@ -342,7 +344,7 @@ export class CommonListController {
 
             const temp: any = result;
             temp.discount = opt.discount;
-            temp.price = opt.price || temp.price;
+            temp.priceOption = opt.price;
             temp.pricePrefix = opt.pricePrefix;
             temp.Images = productImage ? productImage : '';
             temp.Category = productToCategory;
